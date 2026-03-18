@@ -5,7 +5,13 @@ from checkmygrade import CheckMyGradeApp
 class TestCheckMyGradeApp(unittest.TestCase):
 
     def setUp(self):
-        self.app = CheckMyGradeApp()
+
+        self.app = CheckMyGradeApp(
+            students_file="students.csv",
+            courses_file="courses.csv",
+            professors_file="professors.csv",
+            login_file="login.csv"
+        )
 
         self.app.students = []
         self.app.courses = []
@@ -14,14 +20,18 @@ class TestCheckMyGradeApp(unittest.TestCase):
 
         self.app.add_new_course("DATA200", "Python Programming", 3)
         self.app.add_new_course("DATA201", "Databases", 4)
+        self.app.save_courses()
 
         self.app.add_new_professor("P101", "Minerva McGonagall", "mcgonagall@hogwarts.edu", "Senior Professor", "DATA200")
         self.app.add_new_professor("P102", "Severus Snape", "snape@hogwarts.edu", "Associate Professor", "DATA201")
+        self.app.save_courses()
+
 
     # Testing of student records addition/deletion and modification. 
 
     def test_add_student(self):
         result = self.app.add_new_student("S001", "Harry", "Potter", "harry@hogwarts.edu", "DATA200", "P101", 95)
+        self.app.save_students()
         self.assertTrue(result)
         self.assertEqual(len(self.app.students), 1)
         student = self.app.students[0]
@@ -47,6 +57,7 @@ class TestCheckMyGradeApp(unittest.TestCase):
     # Testing to have the student files at least 1000 records.
 
     def test_student_records_with_1000_records(self):
+        self.app.students = []
         for i in range(1000):
             self.app.add_new_student(
                 f"S{i:04d}",
@@ -57,6 +68,7 @@ class TestCheckMyGradeApp(unittest.TestCase):
                 "P101",
                 60 + (i % 41)
             )
+        self.app.save_students()
         self.assertEqual(len(self.app.students), 1000)
 
     # Testing search and sorting functions with timing.
@@ -72,6 +84,8 @@ class TestCheckMyGradeApp(unittest.TestCase):
                 "P101",
                 70 + (i % 25)
             )
+
+        self.app.save_students()
 
         new_app = CheckMyGradeApp()
 
@@ -125,6 +139,7 @@ class TestCheckMyGradeApp(unittest.TestCase):
         self.app.courses = []
         result = self.app.add_new_course("DATA202", "Math", 3)
         self.assertTrue(result)
+        self.app.save_courses()
         self.assertEqual(len(self.app.courses), 1)
 
     def test_delete_course(self):
@@ -151,7 +166,9 @@ class TestCheckMyGradeApp(unittest.TestCase):
             "P103", "Remus Lupin", "lupin@hogwarts.edu", "Professor", "DATA200"
         )
         self.assertTrue(result)
+        self.app.save_professors()
         self.assertEqual(len(self.app.professors), 1)
+
 
     def test_delete_professor(self):
         result = self.app.delete_professor("P102")
@@ -167,6 +184,16 @@ class TestCheckMyGradeApp(unittest.TestCase):
         self.assertEqual(prof.rank, "Head Professor")
         self.assertEqual(prof.email_address, "minerva@hogwarts.edu")
 
+    # Login/User tests
+
+    def test_add_and_login_user(self):
+        self.app.add_new_login_user("hermione@hogwarts.edu", "Magic123#", "student")
+        self.app.save_login_users()
+
+        login_success = self.app.login("hermione@hogwarts.edu", "Magic123#")
+        self.assertTrue(login_success)
+        self.assertIsNotNone(self.app.logged_in_user)
+        self.assertEqual(self.app.logged_in_user.email_id, "hermione@hogwarts.edu")
 
 if __name__ == "__main__":
     unittest.main()
