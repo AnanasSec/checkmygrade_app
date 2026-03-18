@@ -1,0 +1,3 @@
+professor_id,name,email_address,rank,course_id
+P101,Minerva McGonagall,mcgonagall@hogwarts.edu,Senior Professor,DATA200
+P102,Severus Snape,snape@hogwarts.edu,Associate Professor,DATA201

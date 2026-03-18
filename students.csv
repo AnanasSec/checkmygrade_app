@@ -1,0 +1,2 @@
+student_id,first_name,last_name,email_address,course_id,professor_id,marks,grade
+S001,Harry,Potter,harry@hogwarts.edu,DATA200,P101,82.0,B

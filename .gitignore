@@ -1,0 +1,5 @@
+AppData/
+.vscode/
+.zenmap/
+*.log
+*.tmp
